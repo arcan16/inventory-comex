@@ -1,0 +1,135 @@
+@font-face{
+    font-family: "Dosis";
+    src: url('../assets/fonts/dosis/Dosis-Bold.ttf') format('truetype');
+  }
+:root{
+    --main-color-green: rgb(0, 150, 136);
+    --second-color-green: rgb(0, 126, 114);
+    --hover-color-green: rgba(135, 204, 170, 0.96);
+    --hover-color-blue: rgb(39, 158, 150);
+    --third-color-green: rgb(50, 200, 190);
+    --red-alert: rgb(185, 21, 21);
+    --blue-alert: rgb(0, 119, 193);
+    --green-alert: rgb(13, 125, 32)
+  }
+  .box-login h2,
+  .box-login p,
+  .box-login h1{
+    color: white;
+  }
+.box-login{
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(121deg, rgba(0,126,114,1) 1%, rgba(0,199,180,1) 61%, rgba(3,209,190,1) 93%);
+    display: flex;
+    flex-direction:column;
+    align-items: center;
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+  }
+  .box-login>h1{
+    margin: 1rem;
+    font-size: 1.5rem;
+  }
+  @media(min-width: 480px){
+    .box-login>h1{
+      margin: 1rem;
+      font-size: 2rem;
+    }
+  }
+
+  .login-form{
+    box-sizing: inherit;
+    max-width: 60%;
+    min-width: 300px;
+    display: flex;
+    flex-direction: inherit;
+    background-color: rgba(255, 255, 255, 0.232);
+    padding: 1rem 2rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: 1rem;
+  }
+  .header-login{
+    font-size: 1.6rem;
+    margin: 0 auto;
+  }
+  .btn-login{
+    margin-top: 1rem;
+    background-color: var(--second-color-green);
+    color: white;
+    font-weight: bold;
+    width: 60%;
+    padding: .5rem;
+    margin-left: auto;
+    border-radius: 1rem;
+    border: thin solid var(--second-color-green);
+  }
+
+  .btn-login:hover{
+    background-color: var(--hover-color-green);
+    color: black;
+    border: thin solid rgba(255, 255, 255, 0.428);
+  }
+  
+  .login-form,
+  .btn-options{
+    border: thick solid rgba(255, 255, 255, 0.096);
+    box-shadow: 5px 10px 20px rgba(1, 69, 37, 0.4);
+  }
+  
+  .login-form.recovery{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .login-form.recovery>input[type="password"]{
+    width: 80%;
+    padding: .4rem;
+    border-radius: .5rem;
+    margin-bottom: 1rem;
+  }
+
+  .logo-negocio{
+    width: 150px;
+    height: auto;
+    margin: 0 auto;
+  }
+
+  .btn-options{
+    max-width: 60%;
+    min-width: 300px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+  }
+  .btn-options:hover{
+    background-color: rgb(204, 204, 204);
+    cursor: pointer;
+  }
+  .btn-options:active{
+    background-color: rgb(170, 170, 170);
+  }
+  
+  .titulo-login,
+.titulo-login ~ p{
+  margin: 0;
+}
+.titulo-login ~ p{
+  margin-bottom: .5rem;
+}
+.credentials{
+    border: none;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--second-color-green);
+    border-bottom-width: 1px;
+    padding: .5rem 1rem;
+    font-size: 1rem;
+    border-radius: .8rem;
+  }
+  .credentials:focus{
+    outline: none;
+  }

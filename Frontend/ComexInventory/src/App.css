@@ -1,0 +1,451 @@
+@font-face{
+    font-family: "Dosis";
+    src: url('./assets/fonts/dosis/Dosis-Bold.ttf') format('truetype');
+  }
+  :root{
+    --main-color-green: rgb(0, 150, 136);
+    --second-color-green: rgb(0, 126, 114);
+    --hover-color-green: rgba(135, 204, 170, 0.96);
+    --hover-color-blue: rgb(39, 158, 150);
+    --third-color-green: rgb(50, 200, 190);
+    --red-alert: rgb(185, 21, 21);
+    --blue-alert: rgb(0, 119, 193);
+    --green-alert: rgb(13, 125, 32)
+  }
+
+  html,
+body{
+    font-family: 'Dosis', sans-serif ;
+    scroll-behavior: smooth;
+    min-height: 100vh;
+}
+a{
+    text-decoration: none;
+    color: black;
+}
+
+#root{
+    width: 100%;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+/* Comienza diseño de main-container */
+
+.main-container{
+    width: 100%;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+.content-container{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
+.titles-container{
+    width: 100%;
+    height: fit-content;
+    position: sticky;
+    top: 0;
+    z-index: 900;
+}
+
+
+.main-container-title{
+    background-color: var(--second-color-green);
+    color: white;
+    padding: .3rem;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Finaliza diseño de main-container */
+
+/* Comienza diseño para Home */
+
+.cards-container{
+    width: 100%;
+    display: grid;
+    padding: .5rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: .5rem;
+}
+
+.card-big{
+    background-color: var(--main-color-green);
+    color: white;
+    display: inline-block;
+    height: 25vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    background: rgb(0,126,114);
+    background: linear-gradient(180deg, rgba(0,126,114,1) 43%, rgba(3,209,190,1) 93%);
+}
+
+.card-big img{
+    filter: brightness(0%) invert(1);
+}
+
+/* Finaliza diseño para Home */
+
+/* Comienza diseño para Inventory */
+
+
+
+.titles-container{
+    width: 100%;
+    padding: .5rem .8rem;
+    background-color: var(--main-color-green);
+    color: white;
+    display: grid;
+    grid-template-columns: 40% 40% 20%;
+    text-align: center;
+}
+
+.titles-container > *{
+    display: inline-block;
+    margin: 0;
+}
+
+
+
+.dummy-content{
+    display: grid;
+    grid-template-columns: 40% 40% 20%;
+    text-align: center;
+
+    padding: 0 .5rem;
+}
+
+.element-container{
+    width: 100%;
+}
+
+.data-element{
+    width: 100%;
+    display: grid;
+    text-align: center;
+    align-items: center;
+    grid-template-columns: repeat(2,1fr);
+    background-color: var(--third-color-green);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bolder;
+}
+
+.grid-three-columns{
+    grid-template-columns: 40% 40% 20%;
+}
+.grid-four-columns{
+    /* grid-template-columns: repeat(4, 1fr); */
+    grid-template-columns: 20% 23% 23% 1fr ;
+}
+/* Finaliza diseño para Inventory */
+
+/* Comienza diseño de ErrorFetch */
+
+.error-fetch{
+    text-align-last: center;
+    color: white;
+    font-weight: bolder;
+    background-color: red;
+    width: 100%;
+    padding: .5rem;
+    font-size: 1.5rem;
+}
+
+/* Finaliza diseño de ErrorFetch */
+
+/* Comienza diseño de FinishCount */
+
+.finish-btn{
+    text-align-last: center;
+    color: white;
+    font-weight: bolder;
+    background-color: var(--hover-color-green);
+    width: 100%;
+    padding: .5rem;
+    font-size: 1.5rem;
+    border: none;
+    z-index: 999999;
+}
+.finish-btn:hover{
+    text-align-last: center;
+    color: white;
+    font-weight: bolder;
+    background-color: var(--third-color-green);
+    width: 100%;
+    padding: .5rem;
+    font-size: 1.5rem;
+}
+.finish-btn:active{
+    background-color: var(--hover-color-blue);
+}
+
+.pdf-btn{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+
+/* Finaliza diseño de FinishCount */
+
+.grid-first-small{
+    grid-template-columns: 30% 70%; 
+}
+
+/* Comienza diseño para up button */
+
+.up-button{
+    position: fixed;
+    bottom: 4.5rem;
+    right: .5rem;
+    width: 4rem;
+    height: 4rem;
+    background-color: var(--main-color-green);
+    
+    border-radius: 50%;
+    z-index: 9999;
+    opacity: 0; 
+    visibility: hidden;
+    transition: opacity .4s ease,visibility .4s ease,color .4s ease,background-color .5s ease;
+}
+.up-button:hover{
+    font-weight: bold;
+}
+
+.up-image{
+    width: 4rem;
+    height: 4rem;
+}
+/* Finaliza diseño para up button */
+
+.hidden{
+    display: none;
+}
+
+
+
+
+/* Comienza diseño para formularios */
+
+.form{
+    width: 100%;
+    /* background-color: crimson; */
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: 40% 60%;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-normal{
+    width: 100%;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: 60% 30%;
+    gap: .5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.id-type-container{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.data-input{
+    padding: .5rem;
+    border-radius: .5rem;
+    border: thin solid var(--main-color-green);
+    font-weight: bolder;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.no-margin{
+    margin: 0 auto;
+}
+
+.icon-form{
+    margin: auto;
+}
+
+.details{
+    grid-column-start: 1;
+    grid-column-end: 3;
+    text-align: center;
+    width: 100%;
+}
+.btn-submit-container{
+    margin: 1rem 0;
+    grid-column-start: 1;
+    grid-column-end: 3;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+label{
+    font-weight: bolder;
+    text-align: center;
+}
+.radio-type-container{
+    width: 100%;
+    display: flex;
+    /* flex-direction: column; */
+    justify-content: space-between;
+    align-items: center;
+    
+}
+
+.btn-type-code{
+    width: 45%;
+    border-radius: 2rem;
+    padding: .5rem .3rem;
+    border: none;
+    background-color: rgb(220, 242, 213);
+    color: black;
+}
+
+.btn-selected{
+    background-color: var(--third-color-green);
+    color: white;
+}
+
+.btn{
+    width: 100px;
+    padding: .3rem;
+    border-radius: 1rem;
+    font-weight: bolder;
+    border: none;
+    padding: .5rem;
+    background-color: rgb(218, 218, 218);
+  }
+
+.btn-green{
+    background-color: var(--green-alert);
+    color: white;
+  }
+  .btn-red{
+    background-color: var(--red-alert);
+    color: white;
+  }
+  .btn-blue{
+    background-color: var(--blue-alert);
+    color: white;
+  }
+  
+  .description-container{
+    grid-column-start: 1;
+    grid-column-end: 3;
+  }
+/* Finaliza diseño para formularios */
+/* Comienza diseño para Reports.jsx  */
+.grid-two-columns{
+    grid-template-columns: repeat(2,1fr);
+}
+/* Finaliza diseño para Reports.jsx  */
+.principal{
+    height: auto;
+}
+
+.input-filter{
+    width: 70%;
+    padding: .4rem;
+    margin: .5rem 0;
+    border-radius: .8rem;
+    border: none;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.element{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 70% 30%;
+    align-items: center;
+    margin: 0;
+}
+img.dots{
+    width: 100%;
+    height: fit-content;
+    padding: 1rem 0;
+}
+
+.dots-options{
+    width: 200px;
+    height: fit-content;
+    background-color: coral;
+    position: absolute;
+    z-index: 11;
+    right: 2.5rem;
+    /* margin-top: 4rem; */
+    top: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--second-color-green);
+    border-radius: .5rem;
+    transition: opacity .2s ease-in-out;
+    z-index: 990;
+}
+.dots-options > h3{
+    margin: 0;
+    width: 100%;
+    padding: .5rem;
+}
+.dot-opt-hidden{
+    opacity: 0;
+    pointer-events: none;
+}
+
+.delete-btn{
+    background-color: red;
+    border-radius: 0 0 .5rem .5rem;
+}
+
+.dots-back{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 980;
+    /* background-color: rgba(128, 128, 128, 0.407); */
+}
+/* Comienza diseño para next-prev-element */
+
+.next-prev-element{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: fit-content;
+    border-bottom: thin solid var(--main-color-green);
+    border-top: thin solid var(--main-color-green);
+}
+.next-prev-element > * {
+    margin: 0;
+    padding: .5rem;
+}
+
+/* Finaliza diseño para next-prev-element */
