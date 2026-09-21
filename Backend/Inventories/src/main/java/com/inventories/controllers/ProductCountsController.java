@@ -76,6 +76,7 @@ public class ProductCountsController {
         productCounts.setIdInventory(inventories.get());
         productCounts.setIdProduct(products);
         productCounts.setQuantity(newProductCountDTO.quantity());
+        productCounts.setPlace(newProductCountDTO.place());
         productCountsRepository.save(productCounts);
         return ResponseEntity.ok(new ProductCountsCreatedDTO(productCounts));
     }
@@ -108,6 +109,7 @@ public class ProductCountsController {
         productCounts.setIdInventory(inventories.get());
         productCounts.setIdProduct(newProduct);
         productCounts.setQuantity(createProductCountDTO.quantity());
+        productCounts.setPlace(createProductCountDTO.place());
         productCountsRepository.save(productCounts);
 
         System.out.println("Conteo creado" + productCounts);

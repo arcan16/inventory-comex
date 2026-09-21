@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProductsRepository extends JpaRepository<ProductsEntity, Long> {
+public interface ProductsRepository extends JpaRepository<ProductsEntity, String> {
 
     @Query("""
             SELECT p FROM ProductsEntity p WHERE p.id = :id

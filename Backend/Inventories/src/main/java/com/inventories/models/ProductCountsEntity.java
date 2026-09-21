@@ -1,5 +1,6 @@
 package com.inventories.models;
 
+import com.inventories.models.enums.ProductLocation;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,5 +28,8 @@ public class ProductCountsEntity {
         private ProductsEntity idProduct;
 
     private float quantity;
+
+    @Enumerated(EnumType.STRING)
+    private ProductLocation place;
 
 }

@@ -41,6 +41,7 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth->{
+                    auth.requestMatchers("/actuator/health").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session->{
@@ -59,7 +60,6 @@ public class SecurityConfig {
     @Bean
     AuthenticationManager authenticationManager(HttpSecurity httpSecurity,
                                                 PasswordEncoder passwordEncoder) throws Exception {
-        System.out.println("Autenticando");
         return httpSecurity.getSharedObject(AuthenticationManagerBuilder.class)
                 .userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder)
