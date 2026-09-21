@@ -1,8 +1,23 @@
+CREATE TABLE users(
+    id bigint NOT NULL AUTO_INCREMENT,
+    usuario VARCHAR(50) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    PRIMARY KEY(id)
+)ENGINE=InnoDB;
+
  CREATE TABLE inventories (
   id bigint NOT NULL AUTO_INCREMENT,
+  created_by BIGINT NULL,
+  created_by_snapshot VARCHAR(250),
   inventory_date date NOT NULL,
   presentation varchar(10) NOT NULL,
-  PRIMARY KEY (id)
+  status ENUM('OPENED','LOCKED','PENDING','CLOSED') NOT NULL DEFAULT 'OPENED',  -- OPENED: Inventario creado sin comenzar, LOCKED:En uso, PENDING: Comenzado sin finalizar y sin usuario utilizándolo, CLOSED: Finalizado
+  locked_by BIGINT NULL, -- ID del usuario que bloqueo el inventario = locked, NULL = unlocked
+  locked_at TIMESTAMP NULL DEFAULT NULL, -- Momento en que fue bloqueado
+  PRIMARY KEY (id),
+  CONSTRAINT fk_created_user FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+  CONSTRAINT fk_inventory_user FOREIGN KEY (locked_by) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 CREATE TABLE products (
@@ -28,6 +43,7 @@ CREATE TABLE product_counts (
   id_inventory bigint NOT NULL,
   id_product varchar(10) NOT NULL,
   quantity decimal(6,3) NOT NULL,
+  place ENUM('SALES_AREA','WAREHOUSE','STORAGE_AREA','NOTE') NOT NULL, -- Almacena el lugar en que fue encontrado el producto en cuestion (piso, almacen o bodega)
   PRIMARY KEY (id),
   KEY fk_id_inventory_pc (id_inventory),
   KEY fk_id_product_pc (id_product),

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.inventories.dto.inventories.InventoriesDTO;
 import com.inventories.dto.products.ProductsDTO;
 import com.inventories.dto.stock.StockListDTO;
+import com.inventories.infr.services.InventoryService;
 import com.inventories.models.InventoriesEntity;
 import com.inventories.models.ProductCountsEntity;
 import com.inventories.repositories.InventoriesRepository;
@@ -38,6 +39,9 @@ public class InventoriesController {
     @Autowired
     private StockRepository stockRepository;
 
+    @Autowired
+    private InventoryService inventoryService;
+
     @GetMapping
     public ResponseEntity<?> getAllInventories(@PageableDefault(size = 10)Pageable pageable){
         List<InventoriesEntity> inventories = inventoriesRepository.findAll();
@@ -51,8 +55,10 @@ public class InventoriesController {
      */
     @GetMapping("/allByType/{type}")
     public ResponseEntity<?> getAllInventoriesByType(@PathVariable String type){
-        List<InventoriesEntity> inventoriesList = inventoriesRepository.getAllByType(type);
-        return ResponseEntity.ok(inventoriesList);
+        List<InventoriesDTO> inventoriesList = inventoryService.getByType(type);
+        if(inventoriesList.isEmpty())
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok().body(inventoriesList);
     }
 
     @GetMapping("/normal/{idInventory}")
