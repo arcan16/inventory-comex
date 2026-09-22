@@ -18,6 +18,10 @@ import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -145,15 +149,16 @@ public class ProductCountsController {
      * @return Regresa un
      */
     @GetMapping("/summary/{idInventory}")
-    public ResponseEntity<?> getFinishReport(@PathVariable @NotNull Long idInventory)  {
+    public ResponseEntity<?> getFinishReport(@PathVariable @NotNull Long idInventory,
+                                              @PageableDefault(size = 20, direction = Sort.Direction.DESC) Pageable pageable)  {
 
         List<StockEntity> stock = stockRepository.findByIdInventory(idInventory);
         List<ProductCountsEntity> productCounts = productCountsRepository.getInventoryCounts(idInventory);
 
         if(stock.isEmpty() || productCounts.isEmpty())
             return ResponseEntity.badRequest().body("{\"err\":\" El id no existe\"}");
-
-        List<CountsdifferenceDTO> summary = productCountsRepository.getCountDifference(idInventory);
+        System.out.println(productCountsRepository.getCountDifferencePage(idInventory, pageable));
+        Page<CountsdifferenceDTO> summary = productCountsRepository.getCountDifferencePage(idInventory, pageable);
 
         return ResponseEntity.ok().body(summary);
     }
@@ -176,15 +181,18 @@ public class ProductCountsController {
 
 
         List<CountsdifferenceDTO> report = productCountsRepository.getCountDifference(idInventory);
-
+        Optional<InventoriesEntity> inventory = inventoriesRepository.findById(idInventory);
 
         pdfCreator.createPdf(idInventory);
         pdfCreator.openPdf();
         pdfCreator.addTitle("Reporte de Inventario Comex Anahuac");
         pdfCreator.addLineBreaks();
+        pdfCreator.addReportMetadata(idInventory, inventory.orElse(null));
+        pdfCreator.addLineBreaks();
         pdfCreator.addParagraph("Resumen del conteo del inventario fisico");
         pdfCreator.addLineBreaks();
         pdfCreator.addCountTable(report);
+        pdfCreator.addBalanceSummary(report);
         pdfCreator.closeDocument();
         System.out.println("Reporte creado");
 

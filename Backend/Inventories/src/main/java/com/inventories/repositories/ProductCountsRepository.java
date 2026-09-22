@@ -3,6 +3,8 @@ package com.inventories.repositories;
 import com.inventories.dto.productsCount.CountsdifferenceDTO;
 import com.inventories.dto.productsCount.ReportsDTO;
 import com.inventories.models.ProductCountsEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -43,6 +45,30 @@ public interface ProductCountsRepository extends JpaRepository<ProductCountsEnti
             order by s.id
             """)
     List<CountsdifferenceDTO> getCountDifference(Long idInventory);
+
+    @Query(value = """
+            select New com.inventories.dto.productsCount.CountsdifferenceDTO(
+                s.id,
+                s.idInventory.id,
+                p.description,
+                s.idProduct.id,
+                s.stock,
+                coalesce(sum(pc.quantity),0) as sum,
+                (coalesce(sum(pc.quantity),0) - s.stock) as difference
+            )
+            from StockEntity s
+            left join ProductCountsEntity pc on pc.idProduct.id = s.idProduct.id
+            inner join ProductsEntity p on p.id = s.idProduct.id
+            group by s.id, s.idInventory.id, s.idProduct.id, s.stock
+            having s.idInventory.id = :idInventory
+            order by s.id
+            """,
+            countQuery = """
+            select count(s.id)
+            from StockEntity s
+            where s.idInventory.id = :idInventory
+            """)
+    Page<CountsdifferenceDTO> getCountDifferencePage(Long idInventory, Pageable pageable);
 
     @Query("""
             SELECT NEW com.inventories.dto.productsCount.ReportsDTO(
