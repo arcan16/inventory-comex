@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.inventories.dto.inventories.InventoriesDTO;
 import com.inventories.dto.products.ProductsDTO;
+import com.inventories.dto.productsCount.ProductCountsEntryDTO;
 import com.inventories.dto.stock.StockListDTO;
 import com.inventories.infr.services.InventoryService;
 import com.inventories.models.InventoriesEntity;
@@ -64,6 +65,7 @@ public class InventoriesController {
     @GetMapping("/normal/{idInventory}")
     public ResponseEntity<?> getNormalInventory(@PathVariable Long idInventory){
         List<ProductCountsEntity> productCountsList = productCountsRepository.getInventoryCounts(idInventory);
+        List<ProductCountsEntryDTO> productCounts = productCountsList.stream().map(ProductCountsEntryDTO::new).toList();
         List<ProductsDTO> products = productsRepository.findAll().stream().map(ProductsDTO::new).toList();
         List<StockListDTO> stockList = stockRepository.getByIdInventory(idInventory);
 
@@ -73,7 +75,7 @@ public class InventoriesController {
         ArrayNode productsNode = objectMapper.valueToTree(products);
         jsonResponse.set("products", productsNode);
 
-        ArrayNode productCountsNode = objectMapper.valueToTree(productCountsList);
+        ArrayNode productCountsNode = objectMapper.valueToTree(productCounts);
         jsonResponse.set("productsCount", productCountsNode);
 
         ArrayNode stockNode = objectMapper.valueToTree(stockList);
