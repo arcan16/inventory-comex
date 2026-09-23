@@ -8,6 +8,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -17,8 +18,15 @@ public class ProductsController {
     @Autowired
     private ProductsRepository productsRepository;
 
+    /**
+     * Lista paginada de productos del catalogo. Si se recibe "q", filtra por
+     * coincidencia parcial (sin distinguir mayusculas) en el id o la descripcion.
+     */
     @GetMapping
-    public ResponseEntity<?> getAllProducts(@PageableDefault(size = 10, sort = "description")Pageable pageable){
+    public ResponseEntity<?> getAllProducts(@RequestParam(required = false) String q,
+                                             @PageableDefault(size = 20, sort = "description")Pageable pageable){
+        if(q != null && !q.isBlank())
+            return ResponseEntity.ok(productsRepository.search(q.trim(), pageable).map(ProductsDTO::new));
         return ResponseEntity.ok(productsRepository.findAll(pageable).map(ProductsDTO::new));
     }
 
