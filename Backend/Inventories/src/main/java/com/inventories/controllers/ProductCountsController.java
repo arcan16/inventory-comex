@@ -16,8 +16,8 @@ import com.inventories.repositories.StockRepository;
 import com.itextpdf.text.DocumentException;
 import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -39,9 +39,6 @@ import java.util.Optional;
 @RequestMapping("/productCounts")
 public class ProductCountsController {
 
-
-    @Autowired
-    private ResourceLoader resourceLoader;
 
     @Autowired
     private ProductCountsRepository productCountsRepository;
@@ -197,7 +194,7 @@ public class ProductCountsController {
         System.out.println("Reporte creado");
 
 
-        Resource resource = resourceLoader.getResource("classpath:/files/summary_"+ idInventory+".pdf");
+        Resource resource = new FileSystemResource("src/main/resources/files/summary_"+ idInventory+".pdf");
         if (resource.exists() && resource.isReadable()) {
             HttpHeaders headers = new HttpHeaders();
             headers.add("filename","summary_"+ idInventory+".pdf");

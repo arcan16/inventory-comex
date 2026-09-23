@@ -10,6 +10,7 @@ import com.inventories.dto.stock.StockListDTO;
 import com.inventories.infr.services.InventoryService;
 import com.inventories.models.InventoriesEntity;
 import com.inventories.models.ProductCountsEntity;
+import com.inventories.models.enums.InventoryStatus;
 import com.inventories.repositories.InventoriesRepository;
 import com.inventories.repositories.ProductCountsRepository;
 import com.inventories.repositories.ProductsRepository;
@@ -84,6 +85,47 @@ public class InventoriesController {
         return ResponseEntity.ok().body(jsonResponse);
     }
 
+
+    /**
+     * Cierra el inventario indicado, marcandolo como CLOSED para que ya no reciba
+     * mas conteos
+     * @param idInventory Parametro recibido en la url de la peticion
+     * @return El inventario actualizado
+     */
+    @PutMapping("/{idInventory}/close")
+    public ResponseEntity<?> closeInventory(@PathVariable Long idInventory){
+        Optional<InventoriesEntity> inventoryOpt = inventoriesRepository.findById(idInventory);
+        if(inventoryOpt.isEmpty())
+            return ResponseEntity.badRequest().body("{\"err\": \" El id no existe \"}");
+
+        InventoriesEntity inventory = inventoryOpt.get();
+        if(inventory.getStatus() == InventoryStatus.CLOSED)
+            return ResponseEntity.badRequest().body("{\"err\": \" El inventario ya esta cerrado \"}");
+
+        inventory.setStatus(InventoryStatus.CLOSED);
+        inventoriesRepository.save(inventory);
+        return ResponseEntity.ok(new InventoriesDTO(inventory));
+    }
+
+    /**
+     * Reabre un inventario previamente cerrado, regresandolo al estado OPENED
+     * @param idInventory Parametro recibido en la url de la peticion
+     * @return El inventario actualizado
+     */
+    @PutMapping("/{idInventory}/reopen")
+    public ResponseEntity<?> reopenInventory(@PathVariable Long idInventory){
+        Optional<InventoriesEntity> inventoryOpt = inventoriesRepository.findById(idInventory);
+        if(inventoryOpt.isEmpty())
+            return ResponseEntity.badRequest().body("{\"err\": \" El id no existe \"}");
+
+        InventoriesEntity inventory = inventoryOpt.get();
+        if(inventory.getStatus() != InventoryStatus.CLOSED)
+            return ResponseEntity.badRequest().body("{\"err\": \" El inventario no esta cerrado \"}");
+
+        inventory.setStatus(InventoryStatus.OPENED);
+        inventoriesRepository.save(inventory);
+        return ResponseEntity.ok(new InventoriesDTO(inventory));
+    }
 
     /**
      * Elimina el inventario indicado a traves del parametro recibido en la url
