@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -30,6 +32,22 @@ public class UserController {
     @GetMapping
     public ResponseEntity<?> getAllUsers(@PageableDefault(size = 10, sort = "usuario") Pageable pageable){
         return ResponseEntity.ok(userRepository.findAll(pageable).map(UserDTO::new));
+    }
+
+    /**
+     * Datos del usuario autenticado (resuelto por JwtAuthorizationFilter en el
+     * SecurityContext), para la pantalla de "Mi cuenta" de la app movil.
+     */
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication == null || authentication.getName() == null)
+            return ResponseEntity.status(401).body("{\"err\": \"No autenticado\"}");
+
+        Optional<UserEntity> user = userRepository.findByUsuario(authentication.getName());
+        if(user.isEmpty())
+            return ResponseEntity.badRequest().body("{\"err\": \"El usuario no existe\"}");
+        return ResponseEntity.ok(new UserDTO(user.get()));
     }
 
     @GetMapping("/{id}")

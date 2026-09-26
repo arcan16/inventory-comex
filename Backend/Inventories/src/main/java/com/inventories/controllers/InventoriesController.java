@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.inventories.dto.inventories.InventoriesDTO;
+import com.inventories.dto.products.ProductPresentationDTO;
 import com.inventories.dto.products.ProductsDTO;
 import com.inventories.dto.productsCount.ProductCountsEntryDTO;
 import com.inventories.dto.stock.StockListDTO;
@@ -13,6 +14,7 @@ import com.inventories.models.ProductCountsEntity;
 import com.inventories.models.enums.InventoryStatus;
 import com.inventories.repositories.InventoriesRepository;
 import com.inventories.repositories.ProductCountsRepository;
+import com.inventories.repositories.ProductPresentationsRepository;
 import com.inventories.repositories.ProductsRepository;
 import com.inventories.repositories.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,9 @@ public class InventoriesController {
 
     @Autowired
     private StockRepository stockRepository;
+
+    @Autowired
+    private ProductPresentationsRepository productPresentationsRepository;
 
     @Autowired
     private InventoryService inventoryService;
@@ -81,6 +86,11 @@ public class InventoriesController {
 
         ArrayNode stockNode = objectMapper.valueToTree(stockList);
         jsonResponse.set("stock", stockNode);
+
+        // Presentaciones con codigo de barras: la app busca aqui primero al escanear, sin ir a la red.
+        List<ProductPresentationDTO> barcodes = productPresentationsRepository.findAllWithBarcode().stream()
+                .map(ProductPresentationDTO::new).toList();
+        jsonResponse.set("barcodes", objectMapper.valueToTree(barcodes));
 
         return ResponseEntity.ok().body(jsonResponse);
     }
