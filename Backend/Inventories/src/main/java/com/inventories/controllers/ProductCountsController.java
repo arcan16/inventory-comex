@@ -1,7 +1,6 @@
 package com.inventories.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.inventories.dto.productsCount.*;
 import com.inventories.infr.services.PdfCreator;
@@ -14,7 +13,6 @@ import com.inventories.repositories.ProductCountsRepository;
 import com.inventories.repositories.ProductsRepository;
 import com.inventories.repositories.StockRepository;
 import com.itextpdf.text.DocumentException;
-import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -27,7 +25,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.support.ServletContextResource;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

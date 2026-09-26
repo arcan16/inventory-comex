@@ -34,18 +34,26 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         if(headerToken!=null && headerToken.startsWith("Bearer ")){
             String stringToken = headerToken.substring(7);
-            if(jwtUtils.isValidToken(stringToken)){
-                String username = jwtUtils.getUserFromToken(stringToken);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            try {
+                if(jwtUtils.isValidToken(stringToken)){
+                    String username = jwtUtils.getUserFromToken(stringToken);
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(
-                                username,
-                                null,
-                                userDetails.getAuthorities()
-                        );
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    UsernamePasswordAuthenticationToken authenticationToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    username,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
+                }
+            } catch (Exception e) {
+                // El token es valido pero el usuario ya no existe con ese nombre
+                // (renombrado o eliminado, ver AccountActivity/UserController#updateUser):
+                // se deja la request sin autenticar en vez de que el filtro truene
+                // con un 500, y el resto de la cadena la rechaza con 401 normalmente.
+                SecurityContextHolder.clearContext();
             }
         }
         filterChain.doFilter(request,response);
