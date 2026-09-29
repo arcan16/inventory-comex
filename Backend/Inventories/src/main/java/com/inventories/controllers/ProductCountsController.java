@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -140,10 +142,12 @@ public class ProductCountsController {
      * Crea un resumen del conteo registrado, en el que se indica el total de cada producto, el stock que deberia
      * existir y la diferencia
      * @param idInventory Identificador del inventario al que se le realizara el resumen
-     * @return Regresa un
+     * @param onlyDifferences true para devolver solo los productos con diferencia distinta de cero
+     * @return Regresa una pagina del resumen
      */
     @GetMapping("/summary/{idInventory}")
     public ResponseEntity<?> getFinishReport(@PathVariable @NotNull Long idInventory,
+                                              @RequestParam(defaultValue = "false") boolean onlyDifferences,
                                               @PageableDefault(size = 20, direction = Sort.Direction.DESC) Pageable pageable)  {
 
         List<StockEntity> stock = stockRepository.findByIdInventory(idInventory);
@@ -151,10 +155,36 @@ public class ProductCountsController {
 
         if(stock.isEmpty() || productCounts.isEmpty())
             return ResponseEntity.badRequest().body("{\"err\":\" El id no existe\"}");
-        System.out.println(productCountsRepository.getCountDifferencePage(idInventory, pageable));
-        Page<CountsdifferenceDTO> summary = productCountsRepository.getCountDifferencePage(idInventory, pageable);
+        List<CountsdifferenceDTO> rows = buildCountDifference(idInventory);
+        if(onlyDifferences)
+            rows = rows.stream().filter(ProductCountsController::hasDifference).toList();
+
+        // Se pagina en memoria: la lista combina dos consultas y un inventario tiene cientos de renglones.
+        int start = (int) Math.min(pageable.getOffset(), rows.size());
+        int end = Math.min(start + pageable.getPageSize(), rows.size());
+        Page<CountsdifferenceDTO> summary = new PageImpl<>(rows.subList(start, end), pageable, rows.size());
 
         return ResponseEntity.ok().body(summary);
+    }
+
+    /**
+     * Stock del inventario con lo contado de cada producto (en el orden del
+     * archivo cargado), seguido de los productos contados que no venian en el
+     * stock: su stock es 0 y toda su cantidad contada es diferencia. Estos
+     * ultimos no tienen renglon de stock, por eso su id es null.
+     */
+    private List<CountsdifferenceDTO> buildCountDifference(Long idInventory) {
+        List<CountsdifferenceDTO> rows = new ArrayList<>(productCountsRepository.getCountDifference(idInventory));
+        for (Object[] counted : productCountsRepository.getCountedWithoutStock(idInventory)) {
+            Double sum = ((Number) counted[2]).doubleValue();
+            rows.add(new CountsdifferenceDTO(null, idInventory, (String) counted[1], (String) counted[0], 0f, sum, sum));
+        }
+        return rows;
+    }
+
+    /** Diferencia distinta de cero; la tolerancia absorbe el redondeo de los decimales de 3 posiciones. */
+    private static boolean hasDifference(CountsdifferenceDTO row) {
+        return row.difference() == null || Math.abs(row.difference()) >= 0.0005;
     }
 
     /**
@@ -174,7 +204,7 @@ public class ProductCountsController {
             return ResponseEntity.badRequest().body("{\"err\":\" El id no existe\"}");
 
 
-        List<CountsdifferenceDTO> report = productCountsRepository.getCountDifference(idInventory);
+        List<CountsdifferenceDTO> report = buildCountDifference(idInventory);
         Optional<InventoriesEntity> inventory = inventoriesRepository.findById(idInventory);
 
         pdfCreator.createPdf(idInventory);
