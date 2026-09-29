@@ -60,9 +60,15 @@ public class ProductsController {
      * primaria (codigo del producto) y no se puede modificar aqui: cambiarlo
      * rompería las referencias existentes en stock y en los conteos ya
      * registrados. Los codigos de barras ahora viven en product_presentations.
+     *
+     * El id del producto viaja como parametro (?productId=) y no en la ruta
+     * porque algunos ids traen "/" (p. ej. "860/P5"): codificado como %2F en
+     * la ruta, el firewall de Spring Security rechaza la peticion con 400
+     * antes de llegar aqui. Lo mismo aplica a los demas endpoints por producto.
      */
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable String id, @Valid @RequestBody UpdateProductDTO updateProductDTO){
+    @PutMapping
+    public ResponseEntity<?> updateProduct(@RequestParam("productId") String id,
+                                           @Valid @RequestBody UpdateProductDTO updateProductDTO){
         ProductsEntity product = productsRepository.findByStringId(id);
         if(product == null)
             return ResponseEntity.badRequest().body("{\"err\": \"El producto no existe\"}");
@@ -76,8 +82,8 @@ public class ProductsController {
      * Presentaciones registradas de un producto (con su codigo de barras),
      * ordenadas como el enum ProductPresentation (de menor a mayor volumen).
      */
-    @GetMapping("/{id}/presentations")
-    public ResponseEntity<?> getProductPresentations(@PathVariable String id){
+    @GetMapping("/presentations")
+    public ResponseEntity<?> getProductPresentations(@RequestParam("productId") String id){
         if(productsRepository.findByStringId(id) == null)
             return ResponseEntity.badRequest().body("{\"err\": \"El producto no existe\"}");
 
@@ -107,8 +113,8 @@ public class ProductsController {
      * casos responde 400 con el motivo.
      */
     @Transactional
-    @PostMapping("/{id}/presentations/barcode")
-    public ResponseEntity<?> assignBarcode(@PathVariable String id, @Valid @RequestBody AssignBarcodeDTO dto){
+    @PostMapping("/presentations/barcode")
+    public ResponseEntity<?> assignBarcode(@RequestParam("productId") String id, @Valid @RequestBody AssignBarcodeDTO dto){
         ProductsEntity product = productsRepository.findByStringId(id);
         if(product == null)
             return ResponseEntity.badRequest().body("{\"err\": \"El producto no existe\"}");
@@ -147,8 +153,8 @@ public class ProductsController {
      * codigo ya pertenece a otra presentacion se responde 400 indicando cual.
      */
     @Transactional
-    @PutMapping("/{id}/presentations/{presentationId}")
-    public ResponseEntity<?> updateProductPresentation(@PathVariable String id,
+    @PutMapping("/presentations/{presentationId}")
+    public ResponseEntity<?> updateProductPresentation(@RequestParam("productId") String id,
                                                        @PathVariable Long presentationId,
                                                        @Valid @RequestBody UpdateProductPresentationDTO dto){
         ProductPresentationsEntity presentation = productPresentationsRepository.findById(presentationId).orElse(null);
