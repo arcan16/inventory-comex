@@ -13,7 +13,9 @@ public record InventoriesDTO(Long id,
                              String createdBySnapshot,
                              InventoryStatus status,
                              Long lockedBy,
-                             Timestamp lockedAt) {
+                             Timestamp lockedAt,
+                             String lockedByUsername,
+                             String lockedDevice) {
     public InventoriesDTO(InventoriesEntity inventories){
         this(inventories.getId(),
                 inventories.getInventoryDate(),
@@ -22,6 +24,10 @@ public record InventoriesDTO(Long id,
                 inventories.getCreatedBySnapshot(),
                 inventories.getStatus(),
                 inventories.getLockedBy() != null ? inventories.getLockedBy().getId() : null,
-                inventories.getLockedAt());
+                inventories.getLockedAt(),
+                // Quien lo esta usando: la app lo muestra y permite reentrar a su propio usuario.
+                inventories.getLockedBy() != null ? inventories.getLockedBy().getUsuario() : null,
+                // Dispositivo que lo tiene: la app solo deja reentrar al mismo dispositivo.
+                inventories.getLockedDevice());
     }
 }
