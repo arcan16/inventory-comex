@@ -1,11 +1,15 @@
+import os
 import mysql.connector
 
 class DbConnect():
     def __init__(self) -> None:
-        self.host = "localhost"
-        self.user = "root"
-        self.password = "***REMOVED***"
-        self.database = "comex_inventory"
+        # Datos de conexion tomados de variables de entorno (la contrasena es obligatoria)
+        self.host = os.getenv("HOST_DB_INVENTORIES_COMEX", "localhost")
+        self.user = os.getenv("USER_DB_INVENTORIES_COMEX", "root")
+        self.password = os.getenv("PASSWORD_DB_INVENTORIES_COMEX")
+        self.database = os.getenv("NAME_DB_INVENTORIES_COMEX", "comex_inventory")
+        if not self.password:
+            raise RuntimeError("Define la variable de entorno PASSWORD_DB_INVENTORIES_COMEX")
 
     def connect(self):
         self.connection = mysql.connector.connect(

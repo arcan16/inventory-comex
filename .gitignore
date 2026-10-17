@@ -1,0 +1,10 @@
+# Variables de entorno (credenciales)
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Salida de PyInstaller
+build/
+dist/
